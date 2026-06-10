@@ -1,0 +1,24 @@
+{
+  "name": "@nc/logger",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc -w",
+    "lint": "eslint \"src/**/*.ts*\" --max-warnings 0" 
+    
+  },
+  "devDependencies": {
+    "@nc/eslint-config": "workspace:*",
+    "@nc/typescript-config": "workspace:*",
+    "@types/node": "^20.11.24",
+    "eslint": "^8.57.0",
+    "typescript": "5.5.4"
+  }
+}
