@@ -1,0 +1,28 @@
+{
+  "name": "@nc/core",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./decorators": "./src/decorators/index.ts",
+    "./interfaces": "./src/interfaces/index.ts",
+    "./module": "./src/module/index.ts",
+    "./factory": "./src/factory/index.ts",
+    "./swagger": "./src/swagger/index.ts",
+    "./versioning": "./src/versioning/index.ts",
+    "./exceptions": "./src/exceptions/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc -w",
+    "lint": "eslint \"src/**/*.ts*\" --max-warnings 0"
+  },
+  "devDependencies": {
+    "@nc/eslint-config": "workspace:*",
+    "@nc/typescript-config": "workspace:*",
+    "@types/node": "^20.11.24",
+    "eslint": "^8.57.0",
+    "typescript": "5.5.4"
+  }
+}
