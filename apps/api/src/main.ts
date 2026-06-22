@@ -1,5 +1,5 @@
 import { createServer } from "./server";
-
+import "./v";
 async function main() {
   const port = process.env.PORT || 3000;
   const app = createServer();

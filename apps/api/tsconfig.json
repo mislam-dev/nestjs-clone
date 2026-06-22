@@ -4,7 +4,9 @@
     "lib": ["ES2015"],
     "outDir": "./dist",
     "rootDir": "./src",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "exclude": ["node_modules"],
   "include": ["src"]

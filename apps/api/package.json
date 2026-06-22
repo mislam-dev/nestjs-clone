@@ -12,9 +12,12 @@
   "dependencies": {
     "@nc/logger": "workspace:*",
     "body-parser": "^1.20.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
     "cors": "^2.8.5",
     "express": "^4.18.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@nc/eslint-config": "workspace:*",
