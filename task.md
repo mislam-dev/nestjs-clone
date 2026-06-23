@@ -37,5 +37,4 @@
 
 ### Architecture/Monorepo Notes
 
-- **Nx** -> Large Project + complex
 - **Turbo** -> Small - Medium + minimal

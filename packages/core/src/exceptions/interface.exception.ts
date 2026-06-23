@@ -1,6 +1,8 @@
+import { HTTP_STATUS } from "../status-code";
+
 export interface IException {
   getErrorMessage(): string;
-  getStatusCode(): number;
+  getStatusCode(): (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];
   getRequestId(): string;
 }
 
