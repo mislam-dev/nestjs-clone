@@ -10,7 +10,8 @@
     "./factory": "./src/factory/index.ts",
     "./swagger": "./src/swagger/index.ts",
     "./versioning": "./src/versioning/index.ts",
-    "./exceptions": "./src/exceptions/index.ts"
+    "./exceptions": "./src/exceptions/index.ts",
+    "./status-code": "./src/status-code/index.ts"
   },
   "scripts": {
     "build": "tsc",
@@ -30,6 +31,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "express": "^4.22.2",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0",
     "zod": "^4.4.3"
   }
 }

@@ -46,3 +46,5 @@ export const HTTP_STATUS = {
   ...CLIENT_ERROR_CODE,
   ...SERVER_ERROR_CODE,
 };
+
+export type StatusCode = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];
