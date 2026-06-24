@@ -1,7 +1,7 @@
-import { Factory } from "@nc/core/factory";
+import { Factory } from "@nc/core";
 import "reflect-metadata";
 import { AppModule } from "./app.module";
-import "./v";
+
 async function main() {
   const app = Factory.create(AppModule);
   const PORT = process.env.PORT || 3000;

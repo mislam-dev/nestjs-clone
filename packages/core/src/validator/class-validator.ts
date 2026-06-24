@@ -1,11 +1,9 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
-import { injectable } from "tsyringe";
 import { IValidator, SingleError } from "../interfaces/dto.interface";
 
 type ResultType = Promise<Record<string, any> | SingleError[]>;
 
-@injectable()
 export class ClassValidator implements IValidator {
   async validate(instanceClass: any, data: Record<string, any>): ResultType {
     const instance: any = plainToInstance(instanceClass, data);

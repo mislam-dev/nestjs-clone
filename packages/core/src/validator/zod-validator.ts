@@ -1,4 +1,3 @@
-import { injectable } from "tsyringe";
 import z from "zod";
 import {
   IValidator,
@@ -23,7 +22,6 @@ export interface IZodValidator<T = any> {
   safeAsyncParse(data: any): Promise<SafeParseZodResult<T>>;
 }
 
-@injectable()
 export class ZodValidator<T = any> implements IZodValidator<T>, IValidator {
   private _schema: z.ZodType<T> | null = null;
 

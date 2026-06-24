@@ -1,4 +1,4 @@
-import { Module } from "@nc/core/decorators";
+import { Module } from "@nc/core";
 import { injectable } from "tsyringe";
 import { AppController } from "./app.controller";
 import { BlogModule } from "./blog/blog.module";

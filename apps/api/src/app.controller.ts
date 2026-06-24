@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nc/core/decorators";
+import { Controller, Get } from "@nc/core";
 import { injectable } from "tsyringe";
 
 @Controller("")

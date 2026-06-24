@@ -1,4 +1,3 @@
-import { injectable } from "tsyringe";
 import z from "zod";
 import {
   IValidator,
@@ -8,8 +7,8 @@ import {
 import { ClassValidator } from "./class-validator";
 import { ZodValidator } from "./zod-validator";
 
-@injectable()
 export class Validator implements IValidator {
+  private static instance: null | Validator = null;
   constructor(
     private readonly zodValidator: ZodValidator,
     private readonly classValidator: ClassValidator,
@@ -31,5 +30,15 @@ export class Validator implements IValidator {
         "[Validator]: invalid schema or class provided, please provide a valid zod schema or a class",
       );
     return v.validate(schema, data);
+  }
+
+  static create() {
+    if (!Validator.instance) {
+      Validator.instance = new Validator(
+        new ZodValidator(),
+        new ClassValidator(),
+      );
+    }
+    return Validator.instance;
   }
 }

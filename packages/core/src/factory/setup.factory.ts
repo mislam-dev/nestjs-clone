@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import express, {
   Application,
   NextFunction,
@@ -8,7 +9,6 @@ import express, {
 } from "express";
 import expressListEndpoints from "express-list-endpoints";
 import http from "http";
-import "reflect-metadata";
 import { container } from "tsyringe";
 import { HTTPMethod, ParamType, RouteDefinition } from "../decorators/http";
 import {
@@ -25,7 +25,7 @@ import {
   URL_PARAMS_KEY,
   URL_QUERY_KEY,
 } from "../decorators/keys.decorator";
-import { BadRequestException } from "../exceptions";
+import { BadRequestException, Exception } from "../exceptions";
 import { HTTP_STATUS } from "../status-code";
 import { Validator } from "../validator";
 import { TModule } from "./module";
@@ -53,6 +53,8 @@ export class Factory implements IFactory {
     if (!this._app) {
       throw new Error("[Factory]: Application is not created");
     }
+    this._app.use(express.json());
+    this._app.use(express.urlencoded({ extended: true }));
     return this._app;
   }
 
@@ -69,7 +71,43 @@ export class Factory implements IFactory {
     this.registerControllers(controllers ?? []);
     this.nestedModuleControllers(imports ?? []);
 
+    this.handleGlobalErrors();
+    this.handleNotFound();
+
     return this;
+  }
+
+  private handleGlobalErrors() {
+    this.app.use(
+      (err: any, req: Request, res: Response, next: NextFunction) => {
+        if (err instanceof BadRequestException) {
+          return res.status(err.getStatusCode()).json({
+            message: err.getErrorMessage(),
+            request_id: err.getRequestId(),
+            errors: err.getErrorData() || [],
+          });
+        }
+
+        if (err instanceof Exception) {
+          return res.status(err.getStatusCode()).json({
+            message: err.getErrorMessage(),
+            request_id: err.getRequestId(),
+          });
+        }
+        return res.status(500).json({
+          message: "internal server error",
+        });
+      },
+    );
+  }
+
+  private handleNotFound() {
+    this.app.use("*", (_req, res) => {
+      res.status(HTTP_STATUS.NOT_FOUND).json({
+        message: "Not Found",
+        request_id: randomUUID(),
+      });
+    });
   }
 
   private nestedModuleControllers(modules: TModule[]) {
@@ -162,11 +200,13 @@ export class Factory implements IFactory {
       controllerInstance,
       methodName,
     );
+
     if (!dtoSchemaOrClass) return null;
 
-    const validator = container.resolve(Validator);
+    const validator = Validator.create();
 
     const result = await validator.validate(dtoSchemaOrClass, body);
+
     if (Array.isArray(result)) {
       throw new BadRequestException("Validation Error", result);
     }
