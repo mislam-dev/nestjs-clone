@@ -1,6 +1,3 @@
-import "reflect-metadata";
-import { container } from "tsyringe";
-
 import express, {
   Application,
   NextFunction,
@@ -9,6 +6,10 @@ import express, {
   Response,
   Router,
 } from "express";
+import expressListEndpoints from "express-list-endpoints";
+import http from "http";
+import "reflect-metadata";
+import { container } from "tsyringe";
 import { HTTPMethod, ParamType, RouteDefinition } from "../decorators/http";
 import {
   CONTROLLER_KEY,
@@ -30,8 +31,8 @@ import { Validator } from "../validator";
 import { TModule } from "./module";
 
 export interface IFactory {
-  create(module: TModule): IFactory;
-  listen(port: number): void;
+  build(module: TModule): IFactory;
+  listen(port: number, callback?: () => void): void;
   exceptionFilters(filters: any[]): void; // todo: add real interface for filters
   responseTransformers(pipes: any[]): void; // todo: add real interface for pipes
 }
@@ -43,6 +44,11 @@ export class Factory implements IFactory {
     this._app = express();
   }
 
+  static create(module: any) {
+    const factory = new Factory();
+    return factory.build(module);
+  }
+
   private get app() {
     if (!this._app) {
       throw new Error("[Factory]: Application is not created");
@@ -50,14 +56,32 @@ export class Factory implements IFactory {
     return this._app;
   }
 
-  create(module: any): IFactory {
+  build(module: any): IFactory {
     const mod: TModule = Reflect.getMetadata(MODULE_KEY, module);
+    if (!mod) {
+      throw new Error(
+        `[Factory]: Module ${module.name || module} is not registered (missing @Module decorator)`,
+      );
+    }
 
-    const { controllers, imports, providers } = mod;
+    const { controllers, imports } = mod;
 
     this.registerControllers(controllers ?? []);
+    this.nestedModuleControllers(imports ?? []);
 
     return this;
+  }
+
+  private nestedModuleControllers(modules: TModule[]) {
+    if (modules.length === 0) return;
+
+    modules.forEach((mod) => {
+      const moduleProperties: TModule = Reflect.getMetadata(MODULE_KEY, mod);
+      if (moduleProperties?.controllers) {
+        this.registerControllers(moduleProperties.controllers);
+      }
+      this.nestedModuleControllers(moduleProperties.imports ?? []);
+    });
   }
 
   private getControllerMetaData(controller: any): {
@@ -77,7 +101,7 @@ export class Factory implements IFactory {
         Reflect.getMetadata(CONTROLLER_MIDDLEWARE_KEY, controller) || [],
     };
 
-    if (!metaData.basePath) {
+    if (typeof metaData.basePath !== "string") {
       throw new Error(
         `[Factory]: Controller ${controller.name} is not registered`,
       );
@@ -213,13 +237,20 @@ export class Factory implements IFactory {
 
         const handler = this.routeHandler(controllerInstance, route);
 
-        router[route.httpMethod](route.path, ...(middlewares ?? []), handler);
+        router[route.httpMethod](
+          route.path.startsWith("/") ? route.path : `/${route.path}`,
+          ...(middlewares ?? []),
+          handler,
+        );
       });
-
       const controllerPath = `/${metaData.basePath}`;
 
       this.app.use(controllerPath, router);
     });
+  }
+
+  private logRoutes(app: any) {
+    console.table(expressListEndpoints(app));
   }
 
   private getDefaultStatus(methodName: HTTPMethod): number {
@@ -245,10 +276,39 @@ export class Factory implements IFactory {
 
   private registerProviders(): void {}
 
-  listen(port: number = 3000): void {
-    this.app.listen(port, () => {
-      console.log(`Application is running on port ${port}`);
+  listen(port: number = 3000, callback?: () => void): void {
+    const server = http.createServer(this.app);
+
+    server.on("error", (error: any) => {
+      if (error.code === "EADDRINUSE") {
+        console.error(`[Factory]: Port ${port} is already in use.`);
+        process.exit(1);
+      } else {
+        console.error("[Factory]: Server error:", error);
+      }
     });
+
+    server.listen(port, () => {
+      if (callback) {
+        callback();
+      } else {
+        console.log(`Application is running on port ${port}`);
+      }
+    });
+
+    const shutdown = (signal: string) => {
+      server.close(() => {
+        if (signal === "SIGUSR2") {
+          process.kill(process.pid, "SIGUSR2");
+        } else {
+          process.exit(0);
+        }
+      });
+    };
+
+    process.once("SIGINT", () => shutdown("SIGINT"));
+    process.once("SIGTERM", () => shutdown("SIGTERM"));
+    process.once("SIGUSR2", () => shutdown("SIGUSR2"));
   }
   exceptionFilters(filters: any[]): void {
     throw new Error("Method not implemented.");

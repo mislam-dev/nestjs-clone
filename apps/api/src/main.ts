@@ -1,12 +1,12 @@
-import { createServer } from "./server";
+import { Factory } from "@nc/core/factory";
+import "reflect-metadata";
+import { AppModule } from "./app.module";
 import "./v";
 async function main() {
-  const port = process.env.PORT || 3000;
-  const app = createServer();
+  const app = Factory.create(AppModule);
+  const PORT = process.env.PORT || 3000;
 
-  app.listen(port, () => {
-    console.log(`api running on ${port}`);
-  });
+  app.listen(Number(PORT));
 }
 
 void main();

@@ -17,6 +17,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@nc/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@nc/logger':
         specifier: workspace:*
         version: link:../../packages/logger
@@ -41,6 +44,9 @@ importers:
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
+      tsyringe:
+        specifier: ^4.10.0
+        version: 4.10.0
     devDependencies:
       '@nc/eslint-config':
         specifier: workspace:*
@@ -96,6 +102,9 @@ importers:
       express:
         specifier: ^4.22.2
         version: 4.22.2
+      express-list-endpoints:
+        specifier: ^7.1.1
+        version: 7.1.1
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1827,6 +1836,10 @@ packages:
   expect@30.4.1:
     resolution: {integrity: sha512-PMARsyh/JtqC20HoGqlFcIlQAyqUtW4PlI1rup1uhYJtKuwAjbvWi3GQMAn+STdHum/dk8xrKfUM1+5SAwpolA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
+
+  express-list-endpoints@7.1.1:
+    resolution: {integrity: sha512-SA6YHH1r6DrioJ4fFJNqiwu1FweGFqJZO9KBApMzwPosoSGPOX2AW0wiMepOXjojjEXDuP9whIvckomheErbJA==}
+    engines: {node: '>=18'}
 
   express@4.22.2:
     resolution: {integrity: sha512-IuL+Elrou2ZvCFHs18/CIzy2Nzvo25nZ1/D2eIZlz7c+QUayAcYoiM2BthCjs+EBHVpjYjcuLDAiCWgeIX3X1Q==}
@@ -5387,6 +5400,8 @@ snapshots:
       jest-mock: 30.4.1
       jest-util: 30.4.1
     optional: true
+
+  express-list-endpoints@7.1.1: {}
 
   express@4.22.2:
     dependencies:

@@ -5,7 +5,9 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "types": ["node"],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["src"],
   "exclude": ["node_modules"]

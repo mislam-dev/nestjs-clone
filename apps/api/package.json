@@ -10,6 +10,7 @@
     "start": "node -r esbuild-register ./src/main.ts"
   },
   "dependencies": {
+    "@nc/core": "workspace:*",
     "@nc/logger": "workspace:*",
     "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
@@ -17,7 +18,8 @@
     "cors": "^2.8.5",
     "express": "^4.18.3",
     "morgan": "^1.10.0",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0"
   },
   "devDependencies": {
     "@nc/eslint-config": "workspace:*",
